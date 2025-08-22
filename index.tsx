@@ -690,12 +690,13 @@ function handleSelectAiSuggestion(button: HTMLElement) {
     const suggestion = aiProductSuggestions[index];
     if (!suggestion) return;
 
+    // --- Populate form fields ---
     (document.getElementById('product-name') as HTMLInputElement).value = suggestion.name;
     (document.getElementById('product-description') as HTMLTextAreaElement).value = suggestion.description;
 
+    // Handle category
     const categorySelect = document.getElementById('product-category-select') as HTMLSelectElement;
     const allCategories = [...categorySelect.options].map(opt => opt.value);
-
     if (allCategories.includes(suggestion.category)) {
         categorySelect.value = suggestion.category;
     } else {
@@ -704,22 +705,33 @@ function handleSelectAiSuggestion(button: HTMLElement) {
     }
     handleCategoryChange(categorySelect);
 
+    // Handle images
     const previewsContainer = document.getElementById('image-previews');
     if (previewsContainer) previewsContainer.innerHTML = '';
-    if (suggestion.images && suggestion.images.length > 0) {
+    if (suggestion.images?.length > 0) {
         suggestion.images.forEach(imgData => addImagePreview(imgData));
     }
 
+    // Handle custom fields
     const customFieldsContainer = document.getElementById('custom-fields-container');
     if (customFieldsContainer) customFieldsContainer.innerHTML = '';
-    if (suggestion.customFields && suggestion.customFields.length > 0) {
+    if (suggestion.customFields?.length > 0) {
         suggestion.customFields.forEach(field => {
             addCustomFieldRow(field.name, field.value);
         });
     }
 
+    // --- Update UI ---
+    // Hide the AI assistant section after making a selection to prevent re-rendering the form.
+    const aiSearchSection = document.querySelector('.ai-search-section');
+    if (aiSearchSection) {
+      (aiSearchSection as HTMLElement).style.display = 'none';
+    }
+
+    // Clear state so it doesn't reappear if the form component is ever re-rendered by another action.
     aiProductSuggestions = [];
-    renderProductFormContent();
+    aiSearchStatus = '';
+    
     showToast(`Form filled with AI-generated data and images.`);
 }
 
