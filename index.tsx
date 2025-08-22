@@ -90,7 +90,7 @@ function render() {
     <div id="modal-container"></div>
     <header>
         <div class="header-left">
-            <h1>Invntry</h1>
+            <h1>Inventry</h1>
             <nav class="main-nav">
                 <button class="nav-btn ${currentView === 'dashboard' ? 'active' : ''}" data-action="nav-dashboard">${icons.dashboard}Dashboard</button>
                 <button class="nav-btn ${currentView === 'list' ? 'active' : ''}" data-action="nav-inventory">${icons.inventory}Inventory</button>
@@ -1150,6 +1150,19 @@ function init() {
           handleImportFile(event);
       }
   });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        })
+        .catch(err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+  }
+
   render();
 }
 
